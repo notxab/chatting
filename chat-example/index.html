@@ -77,6 +77,16 @@
                 gap: 10px;
             }
 
+            #userCounter {
+                position: absolute;
+                color: white;
+                font-weight: bold;
+                letter-spacing: 1px;
+                border: none;
+                text-align: center;
+                top: 10px;
+                right: 10px;
+            }
 
 
 
@@ -92,6 +102,11 @@
                 <button id="nicknameButton" type='submit'>change nickname!!</button>
                 <input type='text' id='nicknameBox' placeholder="enter your new nickname lol">
             </form>
+
+            <div id="counterDiv">
+                <label id="userCounter">0 users active</label>
+            </div>
+
             <ul id="messages"></ul>
             <form id="form" action="">
                 <input id="input" autocomplete="off" /><button>Send</button>
@@ -171,6 +186,11 @@
                     item.textContent='user joined!';
                     messages.appendChild(item);
                     messages.scrollTop = messages.scrollHeight;
+                });
+
+                socket.on('counter update', (users) => {
+                    var counter = document.getElementById('userCounter');
+                    counter.textContent = `${users} users active`;
                 });
 
                 socket.on('chat message', function(msg) {
