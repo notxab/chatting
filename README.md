@@ -1,4 +1,4 @@
-🗨️ # Epic Chat
+# Epic Chat
 
 A real-time web chat app built with Node.js, Express, and Socket.IO. Users can send messages, change nicknames, and see when others join or leave the chat.
 
