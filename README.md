@@ -1,8 +1,9 @@
-🗨️ **Epic Chat**
+🗨️ # Epic Chat
+
 A real-time web chat app built with Node.js, Express, and Socket.IO. Users can send messages, change nicknames, and see when others join or leave the chat.
 
 
-**Features**
+## Features
 Real-time messaging with Socket.IO
 
 Auto-assigned guest nicknames (e.g. Guest1, Guest2…)
@@ -14,7 +15,7 @@ Join/leave notifications
 Auto-scroll to latest messages
 
 
-**Technologies Used**
+## Technologies Used*
 Node.js
 
 Express
@@ -24,7 +25,7 @@ Socket.IO
 HTML/CSS/JavaScript (Vanilla)
 
 
-**Installation**
+## Installation
 Clone the repository:
 
 bash
@@ -43,7 +44,7 @@ Open your browser:
 Visit http://localhost:3000
 
 
-**How It Works**
+## How It Works
 When a user connects, they are assigned a default nickname like Guest1, Guest2, etc.
 
 Users can click the "change nickname!!" button to enter a new name.
@@ -57,7 +58,7 @@ The chat auto-scrolls to the newest message.
 Join/leave events are displayed in the chat log.
 
 
-**Future Improvements**
+## Future Improvements
 * Persistent nicknames with localStorage or database
 
 * User list sidebar
