@@ -18,6 +18,7 @@ app.get('/', (req, res) => { // '/' becomes route handler
 
 io.on('connection', (socket)=>{
     let guestName = `Guest${guestCount++}`;
+    socket.emit('store nickname', guestName);
     userCount++;
     console.log('a user connected');
     nicknames[socket.id] = guestName;
@@ -40,11 +41,16 @@ io.on('connection', (socket)=>{
         } else {
             socket.emit('nickname change');
             guestName = msg;
+            socket.emit('store nickname', guestName);
             nicknames[socket.id] = msg;
             console.log(guestName);
         };
 
-    })
+    });
+
+    socket.on('isTyping', (nickname) => {
+        socket.broadcast.emit('userTyping', `${nickname} is typing...`);
+    });
 
     socket.on('chat message', (msg) => {
         io.emit('chat message', `${guestName}: ` + msg);
