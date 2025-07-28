@@ -7,58 +7,85 @@ const server = http.createServer(app);
 const { Server } = require("socket.io");
 const io = new Server(server);
 const nicknames = {};
+const users = {};
 let guestCount = 1;
 let userCount = 0;
 //initializes app to be a function handler to be supplied in a http server
+
 
 
 app.get('/', (req, res) => { // '/' becomes route handler
     res.sendFile(__dirname + '/index.html');
 });
 
+
 io.on('connection', (socket)=>{
     let guestName = `Guest${guestCount++}`;
+    socket.nickname = guestName;
+    nicknames[socket.id] = guestName;
+    users[socket.id] = guestName;
+
     socket.emit('store nickname', guestName);
+    socket.emit('existing users', users);
+    socket.broadcast.emit('username box add', {id: socket.id, name: socket.nickname});
+
     userCount++;
     console.log('a user connected');
-    nicknames[socket.id] = guestName;
-
 
     io.emit('counter update', userCount);
     io.emit('user joined');
 
-    socket.on('nickname change', (msg) => {
+    socket.on('nickname change', (name) => {
+        socket.nickname = name;
+
         let userTaken = false;
         for (let id in nicknames) {
-            if (nicknames[id] == msg) {
+            if (nicknames[id] == name) {
                 userTaken = true;
                 break;
-            }
-        }
+            };
+        };
 
         if (userTaken) {
             socket.emit('nickname error', 'nickname already taken!');
         } else {
+            socket.nickname = name;
+            nicknames[socket.id] = name;
+            users[socket.id] = name;
+
             socket.emit('nickname change');
-            guestName = msg;
-            socket.emit('store nickname', guestName);
-            nicknames[socket.id] = msg;
+            socket.emit('store nickname', name);
+
+            io.emit('username box remove', { id: socket.id });
+            io.emit('username box add', {id:socket.id, name} );
+
             console.log(guestName);
         };
 
     });
 
     socket.on('isTyping', (nickname) => {
-        socket.broadcast.emit('userTyping', `${nickname} is typing...`);
+        io.emit('GLOBALIsTyping', {
+            id: socket.id,
+            nickname: socket.nickname
+        });
+        
+        socket.broadcast.emit('userTyping', {
+            id: socket.id,
+            nickname: socket.nickname
+        });
     });
 
     socket.on('chat message', (msg) => {
-        io.emit('chat message', `${guestName}: ` + msg);
-        console.log(`${guestName}: ` + msg);
+        io.emit('chat message', `${socket.nickname}: ` + msg);
+        console.log(`${socket.nickname}: ` + msg);
     });
 
     socket.on('disconnect', () => {
         io.emit('user left');
+        delete users[socket.id];
+        io.emit('username box remove', {id:socket.id});
+
         userCount--;
         io.emit('counter update', userCount);
         delete nicknames[socket.id];
