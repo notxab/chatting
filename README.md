@@ -28,8 +28,8 @@ HTML / CSS / JavaScript (Vanilla)
 
 ## Installation
 bash
-git clone https://github.com/your-username/epic-chat.git
-cd epic-chat
+git clone https://github.com/notxab/chatting
+cd chatting
 npm install
 node index.js
 Then open your browser and go to: http://localhost:3000
