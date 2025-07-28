@@ -1,5 +1,5 @@
 # Epic Chat
-A real-time web chat application built with Node.js, Express, and Socket.IO. Users can send live messages, choose custom nicknames, and see who’s joining or leaving the chat — all in an intuitive interface.
+A real-time web chat application built with Node.js, Express, and Socket.IO. Users can send live messages, choose custom nicknames, and see who’s joining or leaving the chat.
 
 
 ## Features
