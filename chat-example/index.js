@@ -8,26 +8,48 @@ const { Server } = require("socket.io");
 const io = new Server(server);
 const nicknames = {};
 const users = {};
+const avatarImages = [
+    '/avatars/img1.jpg',
+    '/avatars/img2.jpg',
+    '/avatars/img3.jpg',
+    '/avatars/img4.jpg',
+    '/avatars/img5.jpg',
+    '/avatars/img6.jpg'
+]
 let guestCount = 1;
 let userCount = 0;
 //initializes app to be a function handler to be supplied in a http server
 
 
+app.use(express.static(__dirname + '/public'));
 
 app.get('/', (req, res) => { // '/' becomes route handler
     res.sendFile(__dirname + '/index.html');
 });
+
+function getRandomAvatar() {
+    const index = Math.floor(Math.random() * avatarImages.length);
+    return avatarImages[index];
+}
 
 
 io.on('connection', (socket)=>{
     let guestName = `Guest${guestCount++}`;
     socket.nickname = guestName;
     nicknames[socket.id] = guestName;
-    users[socket.id] = guestName;
+    users[socket.id] = {
+        name: guestName,
+        avatar: getRandomAvatar()
+    };
 
     socket.emit('store nickname', guestName);
     socket.emit('existing users', users);
-    socket.broadcast.emit('username box add', {id: socket.id, name: socket.nickname});
+    socket.broadcast.emit('username box add', {
+        id: socket.id,
+        name: socket.nickname,
+        avatar: users[socket.id].avatar
+
+    });
 
     userCount++;
     console.log('a user connected');
@@ -51,13 +73,19 @@ io.on('connection', (socket)=>{
         } else {
             socket.nickname = name;
             nicknames[socket.id] = name;
-            users[socket.id] = name;
+            users[socket.id] = {
+                name,
+                avatar: users[socket.id].avatar
+            };
 
             socket.emit('nickname change');
             socket.emit('store nickname', name);
 
-            io.emit('username box remove', { id: socket.id });
-            io.emit('username box add', {id:socket.id, name} );
+            
+            io.emit('nickname updated', {
+                id: socket.id,
+                newName: socket.nickname
+            })
 
             console.log(guestName);
         };
@@ -82,7 +110,7 @@ io.on('connection', (socket)=>{
     });
 
     socket.on('disconnect', () => {
-        io.emit('user left');
+        io.emit('user left', {id: socket.id, name: socket.nickname});
         delete users[socket.id];
         io.emit('username box remove', {id:socket.id});
 
