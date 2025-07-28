@@ -41,7 +41,7 @@
 
             #chat {width: 70%;
             position: relative;
-            top: 200px;
+            margin-top: 15vh;
             left: 0;
             height: 50vh;
             display: flex;
@@ -73,7 +73,8 @@
                 border: 5px;
                 border-radius: 8px;
                 align-items: center;
-                height: 5vh;
+                height: auto;
+                min-height: 5vh;
                 gap: 0.5rem;
                 box-shadow: 0 1px 3px rgba(0,0,0,0.2);
             }
@@ -139,6 +140,13 @@
                 font-weight: bold;
                 letter-spacing: 1px;
 
+            }
+
+            .user-avatar {
+                width: 2.5rem;
+                height: 2.5rem;
+                border-radius: 50%;
+                margin-right: 8px;
             }
 
 
@@ -292,15 +300,15 @@
 
                     });
 
-                    socket.on('user left', () => {
-                        const userBox = document.getElementById(`user-${namenick}`);
+                    socket.on('user left', ({id, name}) => {
+                        const userBox = document.getElementById(`user-${id}`);
                         if (userBox) {
                             userBox.remove();
                         };
 
                         var item = document.createElement('li');
                         item.style.color = 'white'
-                        item.textContent = 'user left...';
+                        item.textContent = `${name} left...`;
                         messages.appendChild(item);
                         messages.scrollTop = messages.scrollHeight;
                     });
@@ -312,34 +320,55 @@
                         }
                     });
 
-                    socket.on('username box add', ({id, name}) => {
+                    socket.on('nickname updated', ({ id, newName }) => {
+                        const userBox = document.getElementById(`user-${id}`);
+                        if (userBox) {
+                            const nameSpan = userBox.querySelector('.user-name');
+                            if (nameSpan) nameSpan.textContent = newName;
+                        }
+                    });
+
+                    socket.on('username box add', ({id, name, avatar}) => { 
                         const userBox = document.createElement('div');
                         userBox.classList.add('user-box');
                         userBox.id = `user-${id}`;
+
+                        const img = document.createElement('img');
+                        img.src = avatar;
+                        img.className = 'user-avatar';
 
                         const nameSpan = document.createElement('span');
                         nameSpan.classList.add('user-name');
                         nameSpan.textContent = name;
 
+                        userBox.appendChild(img);
                         userBox.appendChild(nameSpan);
-                        userListContainer.appendChild(userBox);
 
+                        sidebar.appendChild(userBox);
                     });
 
                     socket.on('existing users', (users) => {
                         for (const id in users) {
-                            const username = users[id];
+                            const {name, avatar} = users[id];
                             
+                            if (document.getElementById(`user-${id}`)) continue;
+
                             const userBox = document.createElement('div');
                             userBox.classList.add('user-box');
                             userBox.id = `user-${id}`;
 
+                            const img = document.createElement('img');
+                            img.src = avatar;
+                            img.className = 'user-avatar';
+
                             const nameSpan = document.createElement('span');
                             nameSpan.classList.add('user-name');
-                            nameSpan.textContent = username;
+                            nameSpan.textContent = name;
 
+                            userBox.appendChild(img);
                             userBox.appendChild(nameSpan);
-                            userListContainer.appendChild(userBox);
+
+                            sidebar.appendChild(userBox);
                         }
                     });
 
