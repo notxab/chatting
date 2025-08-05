@@ -1,10 +1,11 @@
 {
     "name": "socket_chat_example",
-    "version": "0.1.0",
+    "version": "0.2.0",
     "description": "xablau's chatting service",
     "dependencies": {
+        "bcrypt": "^6.0.0",
         "express": "^4.18.2",
+        "express-session": "^1.18.2",
         "socket.io": "^4.7.2"
     }
 }
-
