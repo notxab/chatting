@@ -97,6 +97,10 @@
                 align-items: center;
             }
 
+            #regalog {
+                display: inline-flex;
+            }
+
             #titleRow {
                 display: flex;
                 flex-direction: row;
@@ -144,62 +148,101 @@
             }
 
             #nicknameButton {
-                position: relative;
+                display: inline-block;
+                vertical-align: middle;
                 background: rgba(0, 0, 0, 0.15);
-                border:none;
+                border: none;
                 padding: 0 1rem;
-                margin: 0.25rem;
+                margin: 0;
                 border-radius: 3px;
                 outline: none;
                 color: white;
-                height: 30px;
-                width: 120px;
-                left: -5;
+                height: 30px; 
+                width: 80px;
+                font-size: 14px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+            }
+
+            
+
+            #removeNicknameButton {
+                display: inline-block;
+                vertical-align: middle;
+                background: rgba(0, 0, 0, 0.15);
+                border: none;
+                padding: 0 1rem;
+                margin: 0;
+                margin-right: 8px;
+                border-radius: 3px;
+                outline: none;
+                color: white;
+                height: 30px; 
+                width: 80px;
+                font-size: 14px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
             }
 
             #registerButton {
                 position: relative;
                 background: rgba(0, 0, 0, 0.15);
-                border:none;
+                border: none;
                 padding: 0 1rem;
                 margin: 0.25rem;
                 border-radius: 3px;
                 outline: none;
                 color: white;
-                height: 30px;
-                width: 120px;
-                left: -5;
-                bottom: 15;
+                height: 30px; 
+                width: 80px;
+                left: 0;
+                top: 0; 
+                font-size: 14px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
             }
 
             #loginButton {
                 position: relative;
                 background: rgba(0, 0, 0, 0.15);
-                border:none;
+                border: none;
                 padding: 0 1rem;
                 margin: 0.25rem;
                 border-radius: 3px;
                 outline: none;
                 color: white;
-                height: 30px;
-                width: 120px;
-                left: -15;
-                bottom: 15;
+                height: 30px; 
+                width: 80px;
+                left: 0;
+                top: 0; 
+                font-size: 14px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
             }
 
             #logoutButton {
                 position: relative;
+                top: -15px;
+                display: inline-flex;
+                vertical-align: middle;
                 background: rgba(0, 0, 0, 0.15);
-                border:none;
+                border: none;
                 padding: 0 1rem;
-                margin: 0.25rem;
+                margin: 0;
+                margin-right: 8px;
                 border-radius: 3px;
                 outline: none;
                 color: white;
-                height: 30px;
-                width: 120px;
-                left: 65vh;
-                bottom: 15;
+                height: 30px; 
+                width: 80px;
+                font-size: 14px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
             }
 
             #nicknameBox {
@@ -207,9 +250,9 @@
             }
 
             #nickname-wrap {
-                display: flex;
                 align-items: center;
-                gap: 10px;
+                gap: 0.5rem;
+                display: inline-flex;
             }
 
             #userCounter {
@@ -268,12 +311,13 @@
 
             <div id="chat">
 
-                <form id='nickname-wrap'>
-                    <button id="nicknameButton" type='submit'>change nickname!!</button>
+                <form id='nickname-wrap' style="display: none;">
+                    <button id="nicknameButton" type='submit'>nickname!!</button>
                     <input type='text' id='nicknameBox' placeholder="enter your new nickname lol">
+                    <button id="removeNicknameButton" type='submit'>remove</button>
                 </form>
                 
-                <div id="reg/log">
+                <div id="regalog">
                     <button id='registerButton' class="noselect">REGISTER</button>
                     <button id="loginButton" class="noselect">LOGIN</button>
                 </div>
@@ -314,6 +358,7 @@
                     const inp = document.getElementById('nicknameBox');
                     const wrap = document.getElementById('nickname-wrap')
                     const nickname = document.getElementById('nicknameButton');
+                    const removeNickname = document.getElementById('removeNicknameButton');
                     const isTypingLabel = document.getElementById('userTyping');
                     const sidebar = document.getElementById('sidebar');
                     const userListContainer = document.getElementById('userListContainer');
@@ -323,9 +368,13 @@
                     open = false
 
                     nickname.addEventListener('click', function(e) {
-                        inp.style.display = open ? 'none' : 'inline-block';
+                        inp.style.display = open ? 'none' : 'inline-flex';
                         open = !open;
                         
+                    });
+
+                    removeNickname.addEventListener('click', function(e) {
+                        socket.emit('removeNickname');
                     });
 
                     regButton.addEventListener('click', function(e) {
@@ -351,6 +400,11 @@
                     form.addEventListener('submit', function(e) {
                         e.preventDefault();
                         if (input.value) {
+                            if (input.value.length > 1000) {
+                                alert('message over 1000 characters')
+                                input.value =''
+                                return;
+                            }
                             socket.emit('chat message', input.value);
                             socket.emit('newMessage');
                             input.value = '';
@@ -381,6 +435,27 @@
                     socket.on('store nickname', (name) => {
                         namenick = name;
                     })
+
+                    socket.on('nicknameButtonCreate', () => {
+                        const form = document.getElementById('nickname-wrap');
+                        if (form) {
+                            form.style.display = 'inline-flex'; // Unhide the form
+
+                            // Optional: prevent duplicate listeners
+                            if (!form.dataset.listenerAttached) {
+                                form.addEventListener('submit', (e) => {
+                                    e.preventDefault();
+                                    const input = document.getElementById('nicknameBox');
+                                    const newName = input.value.trim();
+                                    if (newName) {
+                                        socket.emit('nickname change', newName);
+                                        input.value = '';
+                                    }
+                                });
+                                form.dataset.listenerAttached = 'true';
+                            }
+                        }
+                    });
 
                     socket.on('nickname change', () => {
                         alert('nickname changed successfully!');
@@ -462,7 +537,12 @@
                         const userBox = document.getElementById(`user-${id}`);
                         if (userBox) {
                             const nameSpan = userBox.querySelector('.user-name');
-                            if (nameSpan) nameSpan.textContent = `${nicknameSent} (${loggedUser})`;
+                            if (nameSpan) {
+                                const displayName = nicknameSent === loggedUser
+                                    ? nicknameSent
+                                    : `${nicknameSent} (${loggedUser})`;
+                                nameSpan.textContent = displayName;
+                            }
                         }
                     });
 
@@ -494,7 +574,7 @@
                             socket.emit('logoutUser');
                         });
 
-                        document.getElementById('reg/log').appendChild(logoutButton);
+                        document.getElementById('regalog').appendChild(logoutButton);
                     });
 
                     socket.on('loggedOut', () => {
