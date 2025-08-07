@@ -64,12 +64,12 @@ Webpage is hosted on:
 **http://localhost:3000**
 if you wish to test it out with your friends, port foward port 3000.
 
- Notes
-node_modules is excluded from version control via .gitignore
+## Notes
+- node_modules is excluded from version control via .gitignore
 
-All dependencies are tracked in package.json
+- All dependencies are tracked in package.json
 
-SQLite database file (chat.db) is stored locally
+- SQLite database file (chat.db) is stored locally
 
- Contributions
+## Contributions
 Feel free to fork, improve, or suggest features.
