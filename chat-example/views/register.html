@@ -1,8 +1,44 @@
 <html>
-<head><title>Register</title></head>
+<head>
+  <title>Register</title>
+  <script>
+    function validateForm(event) {
+      const pass = document.querySelector('input[name="password"]').value;
+      const userN = document.querySelector('input[name="username"]').value;
+
+      const minLength = 5;
+      const userMinLength = 3;
+      const hasUppercase = /[A-Z]/.test(pass);
+      const hasNumbers = /[0-9]/.test(pass);
+      const hasSpace = /[ ]/.test(userN);
+
+      if (
+        userN.length < userMinLength ||
+        hasSpace
+      ) {
+        alert('requirements not met, username has to contain at least 3 characters and no spaces')
+        event.preventDefault();
+        return false;
+      }
+
+
+      if (
+        pass.length < minLength ||
+        !hasUppercase ||
+        !hasNumbers
+      ) {
+        alert('requirements not met, password must be at least 5 characters long and include at least one uppercase and a number!')
+        event.preventDefault();
+        return false;
+      }
+      return true;
+    };
+
+  </script>
+</head>
 <body>
   <h2>Register</h2>
-  <form action="/register" method="post">
+  <form action="/register" method="post" onsubmit="return validateForm(event)">
     <input name="username" placeholder="username" required />
     <input name="password" type="password" placeholder="password" required />
     <button type="submit">Sign Up</button>
