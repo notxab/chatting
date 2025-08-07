@@ -7,10 +7,8 @@ const io = new Server(server);
 const nicknames = {};
 const users = {};
 
-// 🔧 Added: track all open socket IDs per username (or guestName)
 const userSockets = {};  
 
-// 🔧 Added: helper to return a de-duplicated map of users by username
 function getUniqueUsers() {
     const unique = {};
     const seen = new Set();
@@ -271,3 +269,4 @@ io.on('connection', (socket) => {
 server.listen(3000, '0.0.0.0', () => {
     console.log('listening on *:3000');
 });
+
