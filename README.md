@@ -1,63 +1,75 @@
-# Epic Chat
-A real-time web chat application built with Node.js, Express, and Socket.IO. Users can send live messages, choose custom nicknames, and see who’s joining or leaving the chat.
+#  Real-Time Chat App XABCORD
+## (obviously just a test)
 
+---
 
 ## Features
-Real-time messaging via Socket.IO
 
-Auto-assigned guest nicknames (e.g. Guest1, Guest2)
+- **Live Chat**: Real-time messaging using Socket.IO
+- **Guest Access**: Join instantly as a guest with a random avatar
+- **User Registration/Login**: Secure authentication with bcrypt and SQLite
+- **Nickname System**: Change your nickname (if logged in)
+- **Typing Indicators**: See when other users are typing
+- **User Avatars**: Random avatars assigned to each user
+- **Session Persistence**: Logged-in users retain identity across sockets
+- **User Count & Notifications**: Live user counter and join/leave alerts
 
-Custom nickname support with validation
+---
 
-Join/leave notifications
+## Tech Stack
 
-Auto-scroll to latest messages
+| Technology | Purpose |
+|------------|---------|
+| **Node.js** | Server-side runtime |
+| **Express** | Web framework |
+| **Socket.IO** | Real-time communication |
+| **SQLite3** | Lightweight database |
+| **bcrypt** | Password hashing |
+| **HTML/CSS/JS** | Frontend |
 
-Live user list and typing indicators
+---
 
+## Authentication Flow
 
-## Technologies Used
-Node.js
+- Users register with a username and password.
+- Passwords are hashed using bcrypt before storing in SQLite.
+- Sessions are used to track logged-in users across socket connections.
+- Guests are assigned a temporary nickname and avatar.
 
-Express
+---
 
-Socket.IO
+## Avatar System
 
-HTML / CSS / JavaScript (Vanilla)
+Each user (guest or logged-in) gets a randomly selected avatar from the `/avatars` folder.
 
+---
 
-## Installation
-bash
-git clone https://github.com/notxab/chatting
-cd chatting
-npm install
-node index.js
-Then open your browser and go to: http://localhost:3000
+## Nickname Logic
 
+- Guests get auto-generated nicknames like `Guest1`, `Guest2`, etc.
+- Logged-in users can change their nickname (if it's not already taken).
+- Nicknames are broadcast to all users and updated live.
 
-## How It Works
-When users connect, they’re given a default nickname like Guest1.
+---
 
-Clicking the “change nickname!!” button allows users to set a new one.
+## Form Validation
 
-The server validates the nickname and avoids duplicates.
+The registration form includes client-side validation:
+- **Username**: Minimum 3 characters, no spaces
+- **Password**: Minimum 5 characters, must include uppercase and number
 
-Messages are broadcast with each user's nickname.
+---
 
-Events like joins and leaves appear in the chat log.
+Webpage is hosted on:
+**http://localhost:3000**
+if you wish to test it out with your friends, port foward port 3000.
 
-A sidebar lists current users and shows when someone is typing.
+ Notes
+node_modules is excluded from version control via .gitignore
 
+All dependencies are tracked in package.json
 
-## Future Improvements
-Persistent nicknames using localStorage or a database
+SQLite database file (chat.db) is stored locally
 
-Custom avatars or profile colors
-
-Emojis and message formatting
-
-Dark/light theme toggle
-
-Support for private chats or multiple rooms
-
-Message history and export features
+ Contributions
+Feel free to fork, improve, or suggest features.
